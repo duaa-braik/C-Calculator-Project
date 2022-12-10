@@ -28,10 +28,18 @@ namespace Price_Calculator_Kata
             PrintPriceChange();
         }
 
+        public double SetNewPrice()
+        {
+            Product.Price = Product.Price + Tax.TaxAmount - Discount.DiscountAmount;
+            return Product.Price;
+        }
+
         private void PrintPriceChange()
         {
             Console.WriteLine($"Tax = {Tax!.TaxPercentage * 100}%, discount = {Discount.DiscountPercentage * 100}%. " +
                 $"Tax amount  = {Tax.TaxAmount}, Discount amount = {Discount.DiscountAmount}");
+
+            Console.WriteLine($"Price Before: {Product.Price}, Price After: {SetNewPrice()}");
 
         }
     }

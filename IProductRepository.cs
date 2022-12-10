@@ -7,5 +7,6 @@
         IDiscount Discount { get; set; }
         void SetTax(ITax tax);
         void SetDiscount(IDiscount discount);
+        public double SetNewPrice();
     }
 }
