@@ -14,11 +14,11 @@ namespace Price_Calculator_Kata
 
         public decimal UPC { get; set; }
 
-        public ITax? Tax { get; set; }
-
         public double Price { get; set; }
 
         private double afterTax;
+
+        private double afterDiscount;
 
         public double PriceAfterTax { 
 
@@ -29,7 +29,13 @@ namespace Price_Calculator_Kata
             }
         }
 
-        public double PriceAfterDiscount { get; set; }
+        public double PriceAfterDiscount {
+            get { return afterDiscount; } 
+            set
+            {
+                afterDiscount = Math.Round(value, 2);
+            }
+        }
 
         public override string ToString()
         {

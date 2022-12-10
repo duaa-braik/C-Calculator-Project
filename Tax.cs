@@ -20,5 +20,17 @@ namespace Price_Calculator_Kata
             }
         }
 
+        private double _taxAmount;
+
+        public double TaxAmount { 
+            get
+            {
+                return _taxAmount;
+            }
+            set
+            {
+                _taxAmount = Math.Round(value, 2);
+            }
+        }
     }
 }
