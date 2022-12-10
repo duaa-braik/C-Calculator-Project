@@ -5,7 +5,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Product product = new Product
+        IProduct product = new Product
         {
             Name = "The Little Prince",
             ProductType = "Book",
@@ -18,14 +18,19 @@ public class Program
 
         Console.WriteLine(product);
 
-        product.SetTax(new Tax
+        IProductRepository ProductRepository = new ProductRepository()
         {
-            TaxPercentage = Int32.Parse(CustomerTax!)
-        });
+            Product = product
+        };
 
-        product.SetTax(new Tax
-        {
-            TaxPercentage = 21
-        });
+        ProductRepository.SetTax(
+            new Tax { TaxPercentage = Int32.Parse(CustomerTax!) }
+        );
+
+        ProductRepository.SetTax(
+            new Tax { TaxPercentage = 21 }
+        );
+
+
     }
 }

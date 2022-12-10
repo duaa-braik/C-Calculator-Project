@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Price_Calculator_Kata
 {
-    public class Product
+    public class Product : IProduct
     {
         public string? Name { get; set; }
 
@@ -29,22 +29,13 @@ namespace Price_Calculator_Kata
             }
         }
 
+        public double PriceAfterDiscount { get; set; }
+
         public override string ToString()
         {
             return $"Sample product: {ProductType} with name = \"{Name}\", UPC = {UPC}, price = ${Price}.";
         }
 
-        public void SetTax(ITax tax)
-        {
-            Tax = tax;
-            PriceAfterTax = Tax.TaxPercentage * Price + Price;
-            PrintPriceChange();
-        }
-        private void PrintPriceChange()
-        {
-            Console.WriteLine(
-                $"Product price reported as ${Price} before tax and ${PriceAfterTax} after {Tax.TaxPercentage * 100}% tax"
-            );
-        }
+        
     }
 }
