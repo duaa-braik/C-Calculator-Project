@@ -27,9 +27,13 @@ public class Program
             new Tax { TaxPercentage = int.Parse(CustomerTax!) }
         );
 
-        ProductRepository.SetDiscount(
-            new Discount { DiscountPercentage = int.Parse(CustomerDiscount!) }
-        );
+        //ProductRepository.SetDiscount(
+        //    new Discount { DiscountPercentage = int.Parse(CustomerDiscount!) }
+        //);
+
+        ProductRepository.PrintPriceChange();
+
+
 
 
     }

@@ -8,5 +8,6 @@
         void SetTax(ITax tax);
         void SetDiscount(IDiscount discount);
         public double SetNewPrice();
+        void PrintPriceChange();
     }
 }
