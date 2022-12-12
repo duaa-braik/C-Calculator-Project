@@ -13,18 +13,18 @@ namespace Price_Calculator_Kata
         public ITax? Tax { get; set; }
         public IDiscount Discount { get; set; }
 
-        public void SetTax(ITax tax)
+
+        public ProductRepository(IProduct product, IDiscount discount, ITax tax)
         {
+            Product = product;
+            Discount = discount;
             Tax = tax;
-            Tax.TaxAmount = (Tax!.TaxPercentage / 100) * Product.Price;
-            Product!.PriceAfterTax = Tax.TaxAmount + Product.Price;
         }
 
-        public void SetDiscount(IDiscount discount)
+        public ProductRepository(IProduct product, ITax tax)
         {
-            Discount = discount;
-            Discount.DiscountAmount = Product.Price * (Discount.DiscountPercentage / 100);
-            Product.PriceAfterDiscount = Product.Price - Discount.DiscountAmount;
+            Product = product;
+            Tax = tax;
         }
 
         public double SetNewPrice()
@@ -34,7 +34,6 @@ namespace Price_Calculator_Kata
             {
                 Product.Price = Product.Price - Discount.DiscountAmount;
             }
-            
             return Product.Price;
         }
 
@@ -42,20 +41,14 @@ namespace Price_Calculator_Kata
         {
             if(Discount != null)
             {
-                //Console.WriteLine($"Tax = {Tax!.TaxPercentage * 100}%, discount = {Discount.DiscountPercentage * 100}%. " +
-                //$"Tax amount  = {Tax.TaxAmount}, Discount amount = {Discount.DiscountAmount}");
                 Console.WriteLine($"Tax = {Tax.TaxPercentage}%, discount = {Discount.DiscountPercentage}%");
                 Console.WriteLine($"Price after discount: ${SetNewPrice()}");
                 Console.WriteLine($"Discount Amount: {Discount.DiscountAmount}");
-
-
-                //Console.WriteLine($"Price Before: {Product.Price}, Price After: {SetNewPrice()}");
             } else
             {
                 Console.WriteLine($"Tax = {Tax.TaxPercentage}%, no discount");
                 Console.WriteLine($"Price: ${SetNewPrice()}");
             }
-            
 
         }
     }
