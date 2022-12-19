@@ -22,6 +22,8 @@ namespace Price_Calculator_Kata.ProductManager
 
         public bool IsSpecial { get; set; }
 
+        public bool HasAddtionalExpenses { get; set; }
+
         public double PriceAfterTax
         {
 

@@ -46,8 +46,10 @@ namespace Price_Calculator_Kata.ProductManager
             {
                 Product.Price = Product.Price - Discount.DiscountAmount;
             }
-
-
+            if(SpecialDiscount != null)
+            {
+                Product.Price = Product.Price - SpecialDiscount.DiscountAmount;
+            }
             return Product.Price;
         }
 

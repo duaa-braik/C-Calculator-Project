@@ -9,6 +9,7 @@
         public double PriceAfterTax { get; set; }
         public double PriceAfterDiscount { get; set; }
         bool IsSpecial { get; set; }
+        bool HasAddtionalExpenses { get; set; }
 
         string ToString();
     }

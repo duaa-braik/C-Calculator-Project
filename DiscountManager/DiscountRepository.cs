@@ -16,14 +16,13 @@ namespace Price_Calculator_Kata.DiscountManager
 
         public DiscountRepository(IProduct product, IDiscount discount)
         {
+            Product = product;
             if (discount.GetType() == typeof(GeneralDiscount))
             {
-                Product = product;
                 generalDiscount = discount;
             }
             else if (discount.GetType() == typeof(SpecialDiscount))
             {
-                Product = product;
                 specialDiscount = discount;
             }
 
@@ -38,7 +37,7 @@ namespace Price_Calculator_Kata.DiscountManager
             else if (specialDiscount != null)
             {
                 specialDiscount.DiscountAmount = Product.Price * (specialDiscount.DiscountPercentage / 100);
-                Product.Price = Product.Price - specialDiscount.DiscountAmount;
+                //Product.Price = Product.Price - specialDiscount.DiscountAmount;
             }
         }
     }
