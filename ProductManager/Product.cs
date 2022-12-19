@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Price_Calculator_Kata
+namespace Price_Calculator_Kata.ProductManager
 {
     public class Product : IProduct
     {
@@ -22,17 +22,19 @@ namespace Price_Calculator_Kata
 
         public bool IsSpecial { get; set; }
 
-        public double PriceAfterTax { 
+        public double PriceAfterTax
+        {
 
-            get { return afterTax; } 
+            get { return afterTax; }
             set
             {
                 afterTax = Math.Round(value, 2);
             }
         }
 
-        public double PriceAfterDiscount {
-            get { return afterDiscount; } 
+        public double PriceAfterDiscount
+        {
+            get { return afterDiscount; }
             set
             {
                 afterDiscount = Math.Round(value, 2);
@@ -44,6 +46,6 @@ namespace Price_Calculator_Kata
             return $"Sample product: {ProductType} with name = \"{Name}\", UPC = {UPC}, price = ${Price}.";
         }
 
-        
+
     }
 }

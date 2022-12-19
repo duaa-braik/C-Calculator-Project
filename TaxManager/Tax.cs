@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Price_Calculator_Kata
+namespace Price_Calculator_Kata.TaxManager
 {
 
     public class Tax : ITax
@@ -19,7 +19,8 @@ namespace Price_Calculator_Kata
 
         private double _taxAmount;
 
-        public double TaxAmount { 
+        public double TaxAmount
+        {
             get
             {
                 return _taxAmount;

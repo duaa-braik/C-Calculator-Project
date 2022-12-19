@@ -1,5 +1,8 @@
 ﻿
 using Price_Calculator_Kata;
+using Price_Calculator_Kata.DiscountManager;
+using Price_Calculator_Kata.ProductManager;
+using Price_Calculator_Kata.TaxManager;
 using System.Linq;
 using System.Linq.Expressions;
 
