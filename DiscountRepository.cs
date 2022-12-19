@@ -37,7 +37,7 @@ namespace Price_Calculator_Kata
             else if(specialDiscount != null)
             {
                 specialDiscount.DiscountAmount = Product.Price * (specialDiscount.DiscountPercentage / 100);
-                //Product.Price = Product.Price - specialDiscount.DiscountAmount;
+                Product.Price = Product.Price - specialDiscount.DiscountAmount;
             }
         }
     }
