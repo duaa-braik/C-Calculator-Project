@@ -8,6 +8,8 @@
         decimal UPC { get; set; }
         public double PriceAfterTax { get; set; }
         public double PriceAfterDiscount { get; set; }
+        bool IsSpecial { get; set; }
+
         string ToString();
     }
 }

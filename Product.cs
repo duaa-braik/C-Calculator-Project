@@ -20,6 +20,8 @@ namespace Price_Calculator_Kata
 
         private double afterDiscount;
 
+        public bool IsSpecial { get; set; }
+
         public double PriceAfterTax { 
 
             get { return afterTax; } 

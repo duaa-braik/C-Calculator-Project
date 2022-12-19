@@ -5,6 +5,6 @@
         IProduct Product { get; set; }
         ITax Tax { get; set; }
 
-        void SetTax();
+        void CalculateTax();
     }
 }

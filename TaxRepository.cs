@@ -19,10 +19,9 @@ namespace Price_Calculator_Kata
             Product = product;
         }
 
-        public void SetTax()
+        public void CalculateTax()
         {
             Tax.TaxAmount = (Tax!.TaxPercentage / 100) * Product.Price;
-            Product!.PriceAfterTax = Tax.TaxAmount + Product.Price;
         }
     }
 }

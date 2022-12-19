@@ -10,18 +10,35 @@ namespace Price_Calculator_Kata
     {
 
         public IProduct Product { get; set; }
-        public IDiscount Discount { get; set; }
+        public IDiscount generalDiscount { get; set; }
+        public IDiscount specialDiscount { get; set; }
 
         public DiscountRepository(IProduct product, IDiscount discount)
         {
-            Product = product;
-            Discount = discount;
+            if(discount.GetType() == typeof(GeneralDiscount))
+            {
+                Product = product;
+                generalDiscount = discount;
+            } 
+            else if(discount.GetType() == typeof(SpecialDiscount))
+            {
+                Product = product;
+                specialDiscount = discount ;
+            }
+            
         }
 
-        public void SetDiscount()
+        public void CalculateDiscount()
         {
-            Discount.DiscountAmount = Product.Price * (Discount.DiscountPercentage / 100);
-            Product.PriceAfterDiscount = Product.Price - Discount.DiscountAmount;
+            if(generalDiscount != null)
+            {
+                generalDiscount.DiscountAmount = Product.Price * (generalDiscount.DiscountPercentage / 100);
+            }
+            else if(specialDiscount != null)
+            {
+                specialDiscount.DiscountAmount = Product.Price * (specialDiscount.DiscountPercentage / 100);
+                //Product.Price = Product.Price - specialDiscount.DiscountAmount;
+            }
         }
     }
 }
