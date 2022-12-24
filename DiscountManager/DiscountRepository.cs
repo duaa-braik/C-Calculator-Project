@@ -7,38 +7,37 @@ using Price_Calculator_Kata.ProductManager;
 
 namespace Price_Calculator_Kata.DiscountManager
 {
-    public class DiscountRepository : IDiscountRepository
+    public class DiscountRepository<T> : IDiscountRepository<T> where T : IDiscount
     {
 
         public IProduct Product { get; set; }
-        public IDiscount generalDiscount { get; set; }
-        public IDiscount specialDiscount { get; set; }
+        public IDiscount Discount { get; set; }
+        public double TotalDiscountAmount { get; set; } = 0;
+        public double PriceForDiscount { get; set; }
 
-        public DiscountRepository(IProduct product, IDiscount discount)
+        public DiscountRepository(IProduct product)
         {
             Product = product;
-            if (discount.GetType() == typeof(GeneralDiscount))
-            {
-                generalDiscount = discount;
-            }
-            else if (discount.GetType() == typeof(SpecialDiscount))
-            {
-                specialDiscount = discount;
-            }
-
+            PriceForDiscount = Product.Price; // 20.25
         }
 
-        public void CalculateDiscount()
+        public void AddDiscount(T discount)
         {
-            if (generalDiscount != null)
-            {
-                generalDiscount.DiscountAmount = Product.Price * (generalDiscount.DiscountPercentage / 100);
-            }
-            else if (specialDiscount != null)
-            {
-                specialDiscount.DiscountAmount = Product.Price * (specialDiscount.DiscountPercentage / 100);
-                //Product.Price = Product.Price - specialDiscount.DiscountAmount;
-            }
+            Discount = discount;
         }
+
+        public void Additive()
+        {
+            Discount.DiscountAmount = Product.Price * Discount.DiscountPercentage / 100;
+            TotalDiscountAmount += Discount.DiscountAmount;
+        }
+
+        public void Multiplicative()
+        {
+            Discount.DiscountAmount = PriceForDiscount * Discount.DiscountPercentage / 100; // 1.42 // 2.82
+            TotalDiscountAmount += Discount.DiscountAmount;
+            PriceForDiscount = Product.Price - Discount.DiscountAmount; // 18.83 // 
+        }
+
     }
 }

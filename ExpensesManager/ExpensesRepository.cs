@@ -36,7 +36,7 @@ namespace Price_Calculator_Kata.ExpensesManager
         {
             Console.WriteLine($"Packaging: ${PackagingCost.Amount:0.##}");
             Console.WriteLine($"Transport: ${TransportCost.Amount:0.##}");
-            Console.WriteLine($"Total: ${Product.Price + PackagingCost.Amount + TransportCost.Amount:0.##}");
+            //Console.WriteLine($"Total: ${Product.Price + PackagingCost.Amount + TransportCost.Amount:0.##}");
         }
 
     }
