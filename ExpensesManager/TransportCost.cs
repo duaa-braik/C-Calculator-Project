@@ -8,7 +8,7 @@ namespace Price_Calculator_Kata.ExpensesManager
 {
     public class TransportCost : ITransportCost
     {
-        public double Amount { get; set; }
-        public double Percentage { get; set; }
+        public double Amount { get; set; } = 0;
+        public double Percentage { get; set; } = 0;
     }
 }
