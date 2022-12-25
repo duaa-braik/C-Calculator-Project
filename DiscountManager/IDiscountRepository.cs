@@ -6,6 +6,7 @@ namespace Price_Calculator_Kata.DiscountManager
     {
         IDiscount Discount { get; set; }
         double TotalDiscountAmount { get; set; }
+        double Cap { get; set; }
 
         void AddDiscount(T discount);
         void Additive();
