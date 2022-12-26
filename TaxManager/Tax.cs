@@ -27,7 +27,7 @@ namespace Price_Calculator_Kata.TaxManager
             }
             set
             {
-                _taxAmount = Math.Round(value, 2);
+                _taxAmount = Precision.ChangePrecision(value);
             }
         }
     }

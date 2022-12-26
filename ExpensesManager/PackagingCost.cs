@@ -8,7 +8,16 @@ namespace Price_Calculator_Kata.ExpensesManager
 {
     public class PackagingCost : IPackagingCost
     {
-        public double Amount { get; set; } = 0; 
+        private double _amount = 0;
+        public double Amount {
+            get { 
+                return _amount; 
+            } 
+            set
+            {
+                _amount = Precision.ChangePrecision(value);
+            }
+        } 
         public double Percentage { get; set; } = 0;
     }
 }

@@ -1,10 +1,12 @@
-﻿using Price_Calculator_Kata.Currencies;
+﻿using Price_Calculator_Kata;
+using Price_Calculator_Kata.Currencies;
 using Price_Calculator_Kata.DiscountManager;
 using Price_Calculator_Kata.ExpensesManager;
 using Price_Calculator_Kata.Logging;
 using Price_Calculator_Kata.PriceCalculation;
 using Price_Calculator_Kata.ProductManager;
 using Price_Calculator_Kata.TaxManager;
+using System.Diagnostics;
 
 public class Program
 {
@@ -54,7 +56,7 @@ public class Program
             ITaxRepository taxRepository = new TaxRepository(products[i], tax);
             taxRepository.CalculateTax();
 
-            CalculateDiscount(products[i], discountRepository, tax, generalDiscount, spacialDiscount, CustomerChoice);
+            CalculateDiscount(products[i], discountRepository, generalDiscount, spacialDiscount, CustomerChoice);
 
             IExpenses transport = new TransportCost();
             IExpenses packaging = new PackagingCost();
@@ -71,7 +73,7 @@ public class Program
 
             double Total = PriceCalculator.CalculateTotal();
 
-            IList<double> Prices = new List<double>
+            List<double> Prices = new List<double>
             {
                 products[i].Price,
                 discountRepository.TotalDiscountAmount,
@@ -81,7 +83,9 @@ public class Program
                 Total
             };
 
-            CurrencyConverter(Prices);
+            AdjustPrecision(Prices);
+
+            string CurrencyCode =  CurrencyConverter(Prices);
 
             IReport Report = new Report()
             {
@@ -90,12 +94,21 @@ public class Program
                 TaxAmount = Prices[2],
                 Transport = Prices[3],
                 Packaging = Prices[4],
-                Total = Prices[5]
+                Total = Prices[5],
+                CurrencyCode = CurrencyCode,
             };
             Report.PrepareReport();
 
             Logger.Print(products[i]);
             Logger.Print(Report.report);
+        }
+    }
+
+    private static void AdjustPrecision(List<double> prices)
+    {
+        for (int i = 0; i < prices.Count; i++)
+        {
+            prices[i] = Precision.ChangePrecision(prices[i], 2);
         }
     }
 
@@ -108,26 +121,33 @@ public class Program
         }
     }
 
-    private static void CurrencyConverter(IList<double> Prices)
+    private static string CurrencyConverter(List<double> Prices)
     {
         ICurrency GBP = new Currency { CurrencyName = "USD" };
 
+        if (GBP.CurrencyName == "USD") return "USD";
+
         CurrencyConverter converter = new(GBP);
 
-        for (int j = 0; j < Prices.Count(); j++)
+
+        for (int j = 0; j < Prices.Count; j++)
         {
             Prices[j] = converter.Convert(Prices[j]);
+
         }
+        return GBP.CurrencyName;
     }
 
-    private static void CalculateDiscount(IProduct product, IDiscountRepository discountRepository, ITax tax, IDiscount generalDiscount, string spacialDiscount, int choice)
+    private static void CalculateDiscount(IProduct product, IDiscountRepository discountRepository, IDiscount generalDiscount, string spacialDiscount, int choice)
     {
         SpecifyCap(product, out double Cap);
 
         discountRepository.Cap = Cap;
 
-        IDiscount specialDiscount = new Discount();
-        specialDiscount.DiscountPercentage = int.Parse(spacialDiscount);
+        IDiscount specialDiscount = new Discount
+        {
+            DiscountPercentage = int.Parse(spacialDiscount)
+        };
 
         if (product.IsSpecial)
         {

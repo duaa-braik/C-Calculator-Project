@@ -17,7 +17,7 @@ namespace Price_Calculator_Kata.DiscountManager
             get { return _discountAmount; }
             set
             {
-                _discountAmount = Math.Round(value, 2);
+                _discountAmount = Precision.ChangePrecision(value);
             }
         }
     }
