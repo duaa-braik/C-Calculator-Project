@@ -1,5 +1,6 @@
 ﻿
 using Price_Calculator_Kata;
+using System.Linq;
 using System.Linq.Expressions;
 
 public class Program
@@ -10,31 +11,74 @@ public class Program
         string? CustomerTax, CustomerDiscount;
         ReadTaxDiscount(out CustomerTax, out CustomerDiscount);
 
-        IProduct product = new Product
+        IProduct product1 = new Product
         {
             Name = "The Little Prince",
             ProductType = "Book",
             UPC = 12345,
-            Price = 20.25
+            Price = 20.25,
+            IsSpecial = true,
         };
 
-        Console.WriteLine(product);
+        IProduct product2 = new Product
+        {
+            Name = "Pride and Prejudice",
+            ProductType = "Book",
+            UPC = 789,
+            Price = 20.25,
+            IsSpecial = false
+        };
 
-        IDiscount discount = new Discount { DiscountPercentage = int.Parse(CustomerDiscount) };
+        List<IProduct> products = new List<IProduct>();
 
+        products.Add(product1);
+        products.Add(product2);
+
+        string? spacialDiscount = Console.ReadLine();
+
+        calculatingdiscount(products, CustomerTax, CustomerDiscount, spacialDiscount);
+
+    }
+
+    private static void calculatingdiscount(List<IProduct> products, string CustomerTax, string CustomerDiscount, string spacialDiscount)
+    {
         ITax tax = new Tax { TaxPercentage = int.Parse(CustomerTax) };
 
-        //IDiscountRepository discountRepository = new DiscountRepository(product, discount);
+        IDiscount generalDiscount = new GeneralDiscount();
+        generalDiscount.DiscountPercentage = int.Parse(CustomerDiscount);
 
-        //discountRepository.SetDiscount();
+        IDiscount specialDiscount = new SpecialDiscount();
+        specialDiscount.DiscountPercentage = int.Parse(spacialDiscount!);
 
-        ITaxRepository taxRepository = new TaxRepository(product, tax);
+        IDiscountRepository discountRepository;
+        for (int i = 0; i < products.Count(); i++)
+        {
+            Console.WriteLine(products[i]);
 
-        taxRepository.SetTax();
+            IProductRepository productRepository = new ProductRepository(products[i]);
 
-        IProductRepository productRepository = new ProductRepository(product, tax);
+            if (products[i].IsSpecial)
+            {
+                discountRepository = new DiscountRepository(products[i], specialDiscount);
+                discountRepository.CalculateDiscount();
+                productRepository.AddSpecialDiscount(specialDiscount);
 
-        productRepository.PrintPriceChange();
+            }
+
+            ITaxRepository taxRepository = new TaxRepository(products[i], tax);
+            taxRepository.CalculateTax();
+
+            productRepository.AddTax(tax);
+
+            discountRepository = new DiscountRepository(products[i], generalDiscount);
+            discountRepository.CalculateDiscount();
+
+            productRepository.AddGeneralDiscount(generalDiscount);
+
+            productRepository.PrintPriceChange();
+
+        }
+
 
     }
 

@@ -2,9 +2,9 @@
 {
     public interface IDiscountRepository
     {
-        IDiscount Discount { get; set; }
+        IDiscount generalDiscount { get; set; }
         IProduct Product { get; set; }
 
-        void SetDiscount();
+        void CalculateDiscount();
     }
 }
