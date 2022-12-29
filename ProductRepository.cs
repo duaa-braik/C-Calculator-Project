@@ -11,23 +11,36 @@ namespace Price_Calculator_Kata
     {
         public IProduct? Product { get; set; }
         public ITax? Tax { get; set; }
-
+        public IDiscount Discount { get; set; }
 
         public void SetTax(ITax tax)
         {
             Tax = tax;
-            //Product = product;
-            Product!.PriceAfterTax = Tax!.TaxPercentage * Product.Price + Product.Price;
+            Tax.TaxAmount = Tax!.TaxPercentage * Product.Price;
+            Product!.PriceAfterTax = Tax.TaxAmount + Product.Price;
+        }
+
+        public void SetDiscount(IDiscount discount)
+        {
+            Discount = discount;
+            Discount.DiscountAmount = Product.Price * Discount.DiscountPercentage;
+            Product.PriceAfterDiscount = Product.Price - Discount.DiscountAmount;
             PrintPriceChange();
+        }
+
+        public double SetNewPrice()
+        {
+            Product.Price = Product.Price + Tax.TaxAmount - Discount.DiscountAmount;
+            return Product.Price;
         }
 
         private void PrintPriceChange()
         {
-            //Console.WriteLine($"Tax = {Tax!.TaxPercentage * 100}, discount = {Discount.DiscountPercentage * 100}." +
-            //    $"Tax amount  = {Tax!.TaxPercentage * Product.Price}, Discount Amount = {Product.Price * Discount.DiscountPercentage}");
+            Console.WriteLine($"Tax = {Tax!.TaxPercentage * 100}%, discount = {Discount.DiscountPercentage * 100}%. " +
+                $"Tax amount  = {Tax.TaxAmount}, Discount amount = {Discount.DiscountAmount}");
 
-            Console.WriteLine($"Product price reported as ${Product!.Price} before tax and ${Product.PriceAfterTax} " +
-                                $"after {Tax!.TaxPercentage * 100}% tax");
+            Console.WriteLine($"Price Before: {Product.Price}, Price After: {SetNewPrice()}");
+
         }
     }
 }

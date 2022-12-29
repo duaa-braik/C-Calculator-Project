@@ -13,8 +13,8 @@ public class Program
             Price = 20.25
         };
 
-        Console.WriteLine("Please specify the percentage of tax you want: ");
-        string? CustomerTax = Console.ReadLine();
+        string? CustomerTax, CustomerDiscount;
+        ReadTaxDiscount(out CustomerTax, out CustomerDiscount);
 
         Console.WriteLine(product);
 
@@ -24,13 +24,21 @@ public class Program
         };
 
         ProductRepository.SetTax(
-            new Tax { TaxPercentage = Int32.Parse(CustomerTax!) }
+            new Tax { TaxPercentage = int.Parse(CustomerTax!) }
         );
 
-        ProductRepository.SetTax(
-            new Tax { TaxPercentage = 21 }
+        ProductRepository.SetDiscount(
+            new Discount { DiscountPercentage = int.Parse(CustomerDiscount!) }
         );
 
 
+    }
+
+    private static void ReadTaxDiscount(out string? CustomerTax, out string? CustomerDiscount)
+    {
+        Console.WriteLine("Please specify the percentage of tax you want to have:");
+        CustomerTax = Console.ReadLine();
+        Console.WriteLine("Please specify the percentage of discount you want to have:");
+        CustomerDiscount = Console.ReadLine();
     }
 }
