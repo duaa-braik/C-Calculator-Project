@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Price_Calculator_Kata.ProductManager;
 
-namespace Price_Calculator_Kata
+namespace Price_Calculator_Kata.TaxManager
 {
 
     public class TaxRepository : ITaxRepository
@@ -21,7 +22,7 @@ namespace Price_Calculator_Kata
 
         public void CalculateTax()
         {
-            Tax.TaxAmount = (Tax!.TaxPercentage / 100) * Product.Price;
+            Tax.TaxAmount = Tax!.TaxPercentage / 100 * Product.Price;
         }
     }
 }

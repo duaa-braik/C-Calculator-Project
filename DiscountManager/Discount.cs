@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Price_Calculator_Kata
+namespace Price_Calculator_Kata.DiscountManager
 {
     public class Discount : IDiscount
     {
@@ -12,12 +12,13 @@ namespace Price_Calculator_Kata
 
         private double _discountAmount = 0;
 
-        public double DiscountAmount {
-            get { return _discountAmount; } 
+        public double DiscountAmount
+        {
+            get { return _discountAmount; }
             set
             {
                 _discountAmount = Math.Round(value, 2);
-            } 
+            }
         }
     }
 }

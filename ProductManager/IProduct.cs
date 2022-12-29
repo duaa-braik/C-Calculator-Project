@@ -1,4 +1,4 @@
-﻿namespace Price_Calculator_Kata
+﻿namespace Price_Calculator_Kata.ProductManager
 {
     public interface IProduct
     {
@@ -9,6 +9,7 @@
         public double PriceAfterTax { get; set; }
         public double PriceAfterDiscount { get; set; }
         bool IsSpecial { get; set; }
+        bool HasAddtionalExpenses { get; set; }
 
         string ToString();
     }

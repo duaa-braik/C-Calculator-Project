@@ -1,5 +1,9 @@
 ﻿
 using Price_Calculator_Kata;
+using Price_Calculator_Kata.DiscountManager;
+using Price_Calculator_Kata.ExpensesManager;
+using Price_Calculator_Kata.ProductManager;
+using Price_Calculator_Kata.TaxManager;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -18,6 +22,7 @@ public class Program
             UPC = 12345,
             Price = 20.25,
             IsSpecial = true,
+            HasAddtionalExpenses = true,
         };
 
         IProduct product2 = new Product
@@ -26,7 +31,8 @@ public class Program
             ProductType = "Book",
             UPC = 789,
             Price = 20.25,
-            IsSpecial = false
+            IsSpecial = false,
+            HasAddtionalExpenses = false,
         };
 
         List<IProduct> products = new List<IProduct>();
@@ -35,9 +41,7 @@ public class Program
         products.Add(product2);
 
         string? spacialDiscount = Console.ReadLine();
-
         calculatingdiscount(products, CustomerTax, CustomerDiscount, spacialDiscount);
-
     }
 
     private static void calculatingdiscount(List<IProduct> products, string CustomerTax, string CustomerDiscount, string spacialDiscount)
@@ -51,7 +55,7 @@ public class Program
         specialDiscount.DiscountPercentage = int.Parse(spacialDiscount!);
 
         IDiscountRepository discountRepository;
-        for (int i = 0; i < products.Count(); i++)
+        for (int i = 0; i < 1; i++)
         {
             Console.WriteLine(products[i]);
 
@@ -62,7 +66,6 @@ public class Program
                 discountRepository = new DiscountRepository(products[i], specialDiscount);
                 discountRepository.CalculateDiscount();
                 productRepository.AddSpecialDiscount(specialDiscount);
-
             }
 
             ITaxRepository taxRepository = new TaxRepository(products[i], tax);
@@ -77,6 +80,15 @@ public class Program
 
             productRepository.PrintPriceChange();
 
+            if (products[i].HasAddtionalExpenses)
+            {
+                IExpenses transport = new TransportCost { Amount = 2.2 };
+                IExpenses packaging = new PackagingCost { Percentage = 1 };
+                ExpensesRepository expensesRepository = new ExpensesRepository(products[i]);
+                expensesRepository.AddCost(packaging);
+                expensesRepository.AddCost(transport);
+                expensesRepository.PrintExpenses();
+            }
         }
 
 

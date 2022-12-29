@@ -1,4 +1,7 @@
-﻿namespace Price_Calculator_Kata
+﻿using Price_Calculator_Kata.DiscountManager;
+using Price_Calculator_Kata.TaxManager;
+
+namespace Price_Calculator_Kata.ProductManager
 {
     public interface IProductRepository
     {

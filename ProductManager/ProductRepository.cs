@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Price_Calculator_Kata.TaxManager;
+using Price_Calculator_Kata.DiscountManager;
 
-namespace Price_Calculator_Kata
+namespace Price_Calculator_Kata.ProductManager
 {
     public class ProductRepository : IProductRepository
     {
@@ -44,8 +46,10 @@ namespace Price_Calculator_Kata
             {
                 Product.Price = Product.Price - Discount.DiscountAmount;
             }
-            
-
+            if(SpecialDiscount != null)
+            {
+                Product.Price = Product.Price - SpecialDiscount.DiscountAmount;
+            }
             return Product.Price;
         }
 
@@ -63,7 +67,7 @@ namespace Price_Calculator_Kata
                 Console.WriteLine($"Tax = {Tax.TaxPercentage}%, no discount");
                 Console.WriteLine($"Price: ${SetNewPrice()}");
             }
-            if(SpecialDiscount != null)
+            if (SpecialDiscount != null)
             {
                 totalDiscountAmount += SpecialDiscount.DiscountAmount;
             }

@@ -1,4 +1,4 @@
-﻿namespace Price_Calculator_Kata
+﻿namespace Price_Calculator_Kata.TaxManager
 {
     public interface ITax
     {
