@@ -8,17 +8,9 @@ namespace Price_Calculator_Kata
 {
     public class Discount : IDiscount
     {
-        private double _dicount;
-        public double DiscountPercentage
-        {
-            get { return _dicount; }
-            set
-            {
-                _dicount = value / 100;
-            }
-        }
+        public double DiscountPercentage { get; set; }
 
-        private double _discountAmount;
+        private double _discountAmount = 0;
 
         public double DiscountAmount {
             get { return _discountAmount; } 

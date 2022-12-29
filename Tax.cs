@@ -13,11 +13,8 @@ namespace Price_Calculator_Kata
 
         public double TaxPercentage
         {
-            get { return _tax; }
-            set
-            {
-                _tax = value / 100;
-            }
+            get;
+            set;
         }
 
         private double _taxAmount;

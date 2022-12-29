@@ -1,10 +1,15 @@
 ﻿
 using Price_Calculator_Kata;
+using System.Linq.Expressions;
 
 public class Program
 {
     public static void Main(string[] args)
     {
+
+        string? CustomerTax, CustomerDiscount;
+        ReadTaxDiscount(out CustomerTax, out CustomerDiscount);
+
         IProduct product = new Product
         {
             Name = "The Little Prince",
@@ -13,24 +18,23 @@ public class Program
             Price = 20.25
         };
 
-        string? CustomerTax, CustomerDiscount;
-        ReadTaxDiscount(out CustomerTax, out CustomerDiscount);
-
         Console.WriteLine(product);
 
-        IProductRepository ProductRepository = new ProductRepository()
-        {
-            Product = product
-        };
+        IDiscount discount = new Discount { DiscountPercentage = int.Parse(CustomerDiscount) };
 
-        ProductRepository.SetTax(
-            new Tax { TaxPercentage = int.Parse(CustomerTax!) }
-        );
+        ITax tax = new Tax { TaxPercentage = int.Parse(CustomerTax) };
 
-        ProductRepository.SetDiscount(
-            new Discount { DiscountPercentage = int.Parse(CustomerDiscount!) }
-        );
+        //IDiscountRepository discountRepository = new DiscountRepository(product, discount);
 
+        //discountRepository.SetDiscount();
+
+        ITaxRepository taxRepository = new TaxRepository(product, tax);
+
+        taxRepository.SetTax();
+
+        IProductRepository productRepository = new ProductRepository(product, tax);
+
+        productRepository.PrintPriceChange();
 
     }
 
