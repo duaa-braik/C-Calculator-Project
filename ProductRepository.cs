@@ -37,17 +37,14 @@ namespace Price_Calculator_Kata
 
         public double SetNewPrice()
         {
-            //Console.WriteLine(Product.Price);
+
             Product.Price = Product.Price + Tax.TaxAmount;
 
             if (Discount != null)
             {
                 Product.Price = Product.Price - Discount.DiscountAmount;
             }
-            if(SpecialDiscount != null)
-            {
-                Product.Price = Product.Price - SpecialDiscount.DiscountAmount;
-            }
+            
 
             return Product.Price;
         }
