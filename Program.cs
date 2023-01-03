@@ -52,7 +52,7 @@ public class Program
         IDiscount generalDiscount = new GeneralDiscount();
         generalDiscount.DiscountPercentage = int.Parse(CustomerDiscount);
 
-       
+
         for (int i = 0; i < 1; i++)
         {
             IDiscountRepository<IDiscount> discountRepository = new DiscountRepository<IDiscount>(products[i]);
@@ -80,6 +80,21 @@ public class Program
 
     private static void calculatingdiscount(IProduct product, IDiscountRepository<IDiscount> discountRepository, ITax tax, IDiscount generalDiscount, string spacialDiscount, int choice)
     {
+
+        Console.WriteLine("Please Spacify the cap amount, as:");
+        Console.WriteLine("1) Amount. 2) Percentage");
+        int CapChoice = int.Parse(Console.ReadLine());
+
+        Console.Write("Cap: ");
+        double Cap = double.Parse(Console.ReadLine()!);
+
+        if(CapChoice == 2)
+        {
+            Cap = Cap / 100 * product.Price;
+        }
+
+        discountRepository.Cap = Cap;
+
         IDiscount specialDiscount = new SpecialDiscount();
         specialDiscount.DiscountPercentage = int.Parse(spacialDiscount);
 

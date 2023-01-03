@@ -14,6 +14,7 @@ namespace Price_Calculator_Kata.DiscountManager
         public IDiscount Discount { get; set; }
         public double TotalDiscountAmount { get; set; } = 0;
         public double PriceForDiscount { get; set; }
+        public double Cap { get; set; }
 
         public DiscountRepository(IProduct product)
         {
@@ -30,6 +31,7 @@ namespace Price_Calculator_Kata.DiscountManager
         {
             Discount.DiscountAmount = Product.Price * Discount.DiscountPercentage / 100;
             TotalDiscountAmount += Discount.DiscountAmount;
+            CompareDiscount();
         }
 
         public void Multiplicative()
@@ -37,6 +39,15 @@ namespace Price_Calculator_Kata.DiscountManager
             Discount.DiscountAmount = PriceForDiscount * Discount.DiscountPercentage / 100; // 1.42 // 2.82
             TotalDiscountAmount += Discount.DiscountAmount;
             PriceForDiscount = Product.Price - Discount.DiscountAmount; // 18.83 // 
+            CompareDiscount();
+        }
+
+        public void CompareDiscount()
+        {
+            if(TotalDiscountAmount > Cap)
+            {
+                TotalDiscountAmount = Cap;
+            }
         }
 
     }
