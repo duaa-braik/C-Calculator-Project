@@ -2,11 +2,13 @@
 
 namespace Price_Calculator_Kata.DiscountManager
 {
-    public interface IDiscountRepository
+    public interface IDiscountRepository<T> where T : IDiscount
     {
-        IDiscount generalDiscount { get; set; }
-        IProduct Product { get; set; }
+        IDiscount Discount { get; set; }
+        double TotalDiscountAmount { get; set; }
 
-        void CalculateDiscount();
+        void AddDiscount(T discount);
+        void Additive();
+        void Multiplicative();
     }
 }

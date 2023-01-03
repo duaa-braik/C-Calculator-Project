@@ -16,7 +16,6 @@ namespace Price_Calculator_Kata.ProductManager
         public IDiscount Discount { get; set; }
         public IDiscount SpecialDiscount { get; set; }
 
-
         public ProductRepository(IProduct product)
         {
             Product = product;

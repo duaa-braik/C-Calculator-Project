@@ -2,6 +2,7 @@
 using Price_Calculator_Kata;
 using Price_Calculator_Kata.DiscountManager;
 using Price_Calculator_Kata.ExpensesManager;
+using Price_Calculator_Kata.Logging;
 using Price_Calculator_Kata.ProductManager;
 using Price_Calculator_Kata.TaxManager;
 using System.Linq;
@@ -41,57 +42,78 @@ public class Program
         products.Add(product2);
 
         string? spacialDiscount = Console.ReadLine();
-        calculatingdiscount(products, CustomerTax, CustomerDiscount, spacialDiscount);
-    }
 
-    private static void calculatingdiscount(List<IProduct> products, string CustomerTax, string CustomerDiscount, string spacialDiscount)
-    {
+        Console.WriteLine("Choose the way you want to have your discounts to be calculated");
+        Console.WriteLine("1) Additive. 2) Multiplicative");
+        int CustomerChoice = int.Parse(Console.ReadLine());
+
         ITax tax = new Tax { TaxPercentage = int.Parse(CustomerTax) };
 
         IDiscount generalDiscount = new GeneralDiscount();
         generalDiscount.DiscountPercentage = int.Parse(CustomerDiscount);
 
-        IDiscount specialDiscount = new SpecialDiscount();
-        specialDiscount.DiscountPercentage = int.Parse(spacialDiscount!);
-
-        IDiscountRepository discountRepository;
+       
         for (int i = 0; i < 1; i++)
         {
-            Console.WriteLine(products[i]);
+            IDiscountRepository<IDiscount> discountRepository = new DiscountRepository<IDiscount>(products[i]);
+            calculatingdiscount(products[i], discountRepository, tax, generalDiscount, spacialDiscount, CustomerChoice);
 
-            IProductRepository productRepository = new ProductRepository(products[i]);
-
-            if (products[i].IsSpecial)
-            {
-                discountRepository = new DiscountRepository(products[i], specialDiscount);
-                discountRepository.CalculateDiscount();
-                productRepository.AddSpecialDiscount(specialDiscount);
-            }
-
-            ITaxRepository taxRepository = new TaxRepository(products[i], tax);
-            taxRepository.CalculateTax();
-
-            productRepository.AddTax(tax);
-
-            discountRepository = new DiscountRepository(products[i], generalDiscount);
-            discountRepository.CalculateDiscount();
-
-            productRepository.AddGeneralDiscount(generalDiscount);
-
-            productRepository.PrintPriceChange();
-
+            IExpenses transport = new TransportCost();
+            IExpenses packaging = new PackagingCost();
             if (products[i].HasAddtionalExpenses)
             {
-                IExpenses transport = new TransportCost { Amount = 2.2 };
-                IExpenses packaging = new PackagingCost { Percentage = 1 };
-                ExpensesRepository expensesRepository = new ExpensesRepository(products[i]);
-                expensesRepository.AddCost(packaging);
-                expensesRepository.AddCost(transport);
-                expensesRepository.PrintExpenses();
+                transport.Amount = 2.2;
+                packaging.Amount = 0.2;
             }
+
+            Logger logger = new Logger
+            {
+                Price = products[i].Price,
+                DiscountAmount = discountRepository.TotalDiscountAmount,
+                TaxAmount = tax.TaxAmount,
+                Transport = transport,
+                Packaging = packaging
+            };
+            logger.PrepareReport();
+        }
+    }
+
+    private static void calculatingdiscount(IProduct product, IDiscountRepository<IDiscount> discountRepository, ITax tax, IDiscount generalDiscount, string spacialDiscount, int choice)
+    {
+        IDiscount specialDiscount = new SpecialDiscount();
+        specialDiscount.DiscountPercentage = int.Parse(spacialDiscount);
+
+        Console.WriteLine(product);
+
+        IProductRepository productRepository = new ProductRepository(product);
+
+        if (product.IsSpecial)
+        {
+            discountRepository.AddDiscount(specialDiscount);
+            DiscountMethod(choice, discountRepository);
+            productRepository.AddSpecialDiscount(specialDiscount);
         }
 
+        discountRepository.AddDiscount(generalDiscount);
+        DiscountMethod(choice, discountRepository);
+        productRepository.AddGeneralDiscount(generalDiscount);
 
+
+        ITaxRepository taxRepository = new TaxRepository(product, tax);
+        taxRepository.CalculateTax();
+        productRepository.AddTax(tax);
+    }
+
+    private static void DiscountMethod(int choice, IDiscountRepository<IDiscount> discountRepository)
+    {
+        if (choice == 1)
+        {
+            discountRepository.Additive();
+        }
+        else if (choice == 2)
+        {
+            discountRepository.Multiplicative();
+        }
     }
 
     private static void ReadTaxDiscount(out string? CustomerTax, out string? CustomerDiscount)
