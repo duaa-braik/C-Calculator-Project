@@ -1,20 +1,17 @@
-﻿
-using Price_Calculator_Kata;
+﻿using Price_Calculator_Kata.Currencies;
 using Price_Calculator_Kata.DiscountManager;
 using Price_Calculator_Kata.ExpensesManager;
 using Price_Calculator_Kata.Logging;
+using Price_Calculator_Kata.PriceCalculation;
 using Price_Calculator_Kata.ProductManager;
 using Price_Calculator_Kata.TaxManager;
-using System.Linq;
-using System.Linq.Expressions;
 
 public class Program
 {
     public static void Main(string[] args)
     {
 
-        string? CustomerTax, CustomerDiscount;
-        ReadTaxDiscount(out CustomerTax, out CustomerDiscount);
+        ReadCustomerInputs(out string? CustomerTax, out string? CustomerDiscount, out string? spacialDiscount, out int CustomerChoice);
 
         IProduct product1 = new Product
         {
@@ -23,7 +20,7 @@ public class Program
             UPC = 12345,
             Price = 20.25,
             IsSpecial = true,
-            HasAddtionalExpenses = true,
+            HasAddtionalExpenses = false,
         };
 
         IProduct product2 = new Product
@@ -36,90 +33,128 @@ public class Program
             HasAddtionalExpenses = false,
         };
 
-        List<IProduct> products = new List<IProduct>();
-
-        products.Add(product1);
-        products.Add(product2);
-
-        string? spacialDiscount = Console.ReadLine();
-
-        Console.WriteLine("Choose the way you want to have your discounts to be calculated");
-        Console.WriteLine("1) Additive. 2) Multiplicative");
-        int CustomerChoice = int.Parse(Console.ReadLine());
+        IList<IProduct> products = new List<IProduct>
+        {
+            product1,
+            product2
+        };
 
         ITax tax = new Tax { TaxPercentage = int.Parse(CustomerTax) };
 
-        IDiscount generalDiscount = new GeneralDiscount();
-        generalDiscount.DiscountPercentage = int.Parse(CustomerDiscount);
+        IDiscount generalDiscount = new Discount
+        {
+            DiscountPercentage = int.Parse(CustomerDiscount)
+        };
 
 
         for (int i = 0; i < 1; i++)
         {
-            IDiscountRepository<IDiscount> discountRepository = new DiscountRepository<IDiscount>(products[i]);
-            calculatingdiscount(products[i], discountRepository, tax, generalDiscount, spacialDiscount, CustomerChoice);
+            IDiscountRepository discountRepository = new DiscountRepository(products[i]);
+
+            ITaxRepository taxRepository = new TaxRepository(products[i], tax);
+            taxRepository.CalculateTax();
+
+            CalculateDiscount(products[i], discountRepository, tax, generalDiscount, spacialDiscount, CustomerChoice);
 
             IExpenses transport = new TransportCost();
             IExpenses packaging = new PackagingCost();
-            if (products[i].HasAddtionalExpenses)
-            {
-                transport.Amount = 2.2;
-                packaging.Amount = 0.2;
-            }
+            ApplyExpenses(products[i], transport, packaging);
 
-            Logger logger = new Logger
+            IPriceCalculations PriceCalculator = new PriceCalculations()
             {
                 Price = products[i].Price,
                 DiscountAmount = discountRepository.TotalDiscountAmount,
                 TaxAmount = tax.TaxAmount,
-                Transport = transport,
-                Packaging = packaging
+                Transport = transport.Amount,
+                Packaging = packaging.Amount
             };
-            logger.PrepareReport();
+
+            double Total = PriceCalculator.CalculateTotal();
+
+            IList<double> Prices = new List<double>
+            {
+                products[i].Price,
+                discountRepository.TotalDiscountAmount,
+                tax.TaxAmount,
+                transport.Amount,
+                packaging.Amount,
+                Total
+            };
+
+            CurrencyConverter(Prices);
+
+            IReport Report = new Report()
+            {
+                Price = Prices[0],
+                DiscountAmount = Prices[1],
+                TaxAmount = Prices[2],
+                Transport = Prices[3],
+                Packaging = Prices[4],
+                Total = Prices[5]
+            };
+            Report.PrepareReport();
+
+            Logger.Print(products[i]);
+            Logger.Print(Report.report);
         }
     }
 
-    private static void calculatingdiscount(IProduct product, IDiscountRepository<IDiscount> discountRepository, ITax tax, IDiscount generalDiscount, string spacialDiscount, int choice)
+    private static void ApplyExpenses(IProduct product, IExpenses transport, IExpenses packaging)
     {
-
-        Console.WriteLine("Please Spacify the cap amount, as:");
-        Console.WriteLine("1) Amount. 2) Percentage");
-        int CapChoice = int.Parse(Console.ReadLine());
-
-        Console.Write("Cap: ");
-        double Cap = double.Parse(Console.ReadLine()!);
-
-        if(CapChoice == 2)
+        if (product.HasAddtionalExpenses)
         {
-            Cap = Cap / 100 * product.Price;
+            transport.Amount = 2.2;
+            packaging.Amount = 0.2;
         }
+    }
+
+    private static void CurrencyConverter(IList<double> Prices)
+    {
+        ICurrency GBP = new Currency { CurrencyName = "USD" };
+
+        CurrencyConverter converter = new(GBP);
+
+        for (int j = 0; j < Prices.Count(); j++)
+        {
+            Prices[j] = converter.Convert(Prices[j]);
+        }
+    }
+
+    private static void CalculateDiscount(IProduct product, IDiscountRepository discountRepository, ITax tax, IDiscount generalDiscount, string spacialDiscount, int choice)
+    {
+        SpecifyCap(product, out double Cap);
 
         discountRepository.Cap = Cap;
 
-        IDiscount specialDiscount = new SpecialDiscount();
+        IDiscount specialDiscount = new Discount();
         specialDiscount.DiscountPercentage = int.Parse(spacialDiscount);
-
-        Console.WriteLine(product);
-
-        IProductRepository productRepository = new ProductRepository(product);
 
         if (product.IsSpecial)
         {
             discountRepository.AddDiscount(specialDiscount);
             DiscountMethod(choice, discountRepository);
-            productRepository.AddSpecialDiscount(specialDiscount);
         }
 
         discountRepository.AddDiscount(generalDiscount);
         DiscountMethod(choice, discountRepository);
-        productRepository.AddGeneralDiscount(generalDiscount);
-
-
-        ITaxRepository taxRepository = new TaxRepository(product, tax);
-        taxRepository.CalculateTax();
-        productRepository.AddTax(tax);
     }
 
-    private static void DiscountMethod(int choice, IDiscountRepository<IDiscount> discountRepository)
+    private static void SpecifyCap(IProduct product, out double Cap)
+    {
+        Console.WriteLine("Please Spacify the cap amount, as:");
+        Console.WriteLine("1) Amount. 2) Percentage");
+        int CapChoice = int.Parse(Console.ReadLine());
+
+        Console.Write("Cap: ");
+        Cap = double.Parse(Console.ReadLine()!);
+
+        if (CapChoice == 2)
+        {
+            Cap = Cap / 100 * product.Price;
+        }
+    }
+
+    private static void DiscountMethod(int choice, IDiscountRepository discountRepository)
     {
         if (choice == 1)
         {
@@ -131,11 +166,16 @@ public class Program
         }
     }
 
-    private static void ReadTaxDiscount(out string? CustomerTax, out string? CustomerDiscount)
+    private static void ReadCustomerInputs(out string? CustomerTax, out string? CustomerDiscount, out string? spacialDiscount, out int CustomerChoice)
     {
-        Console.WriteLine("Please specify the percentage of tax you want to have:");
+        Console.Write("Tax Percentage: ");
         CustomerTax = Console.ReadLine();
-        Console.WriteLine("Please specify the percentage of discount you want to have:");
+        Console.Write("Universal Discount Percentage: ");
         CustomerDiscount = Console.ReadLine();
+        Console.Write("UPC Discount: ");
+        spacialDiscount = Console.ReadLine();
+        Console.WriteLine("Choose the way you want to have your discounts calculated");
+        Console.WriteLine("1) Additive. 2) Multiplicative");
+        CustomerChoice = int.Parse(Console.ReadLine()!);
     }
 }

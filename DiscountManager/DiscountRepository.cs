@@ -7,7 +7,7 @@ using Price_Calculator_Kata.ProductManager;
 
 namespace Price_Calculator_Kata.DiscountManager
 {
-    public class DiscountRepository<T> : IDiscountRepository<T> where T : IDiscount
+    public class DiscountRepository : IDiscountRepository
     {
 
         public IProduct Product { get; set; }
@@ -22,7 +22,7 @@ namespace Price_Calculator_Kata.DiscountManager
             PriceForDiscount = Product.Price; // 20.25
         }
 
-        public void AddDiscount(T discount)
+        public void AddDiscount(IDiscount discount)
         {
             Discount = discount;
         }
